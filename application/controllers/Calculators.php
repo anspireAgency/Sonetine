@@ -69,6 +69,7 @@ class Calculators extends CI_Controller {
 		}
 		$this->form_validation->set_rules('phone', $this->lang->line('create_user_validation_phone_label'), 'trim');
 		$this->form_validation->set_rules('company', $this->lang->line('create_user_validation_company_label'), 'trim');
+		$this->form_validation->set_rules('industry', $this->lang->line('create_user_validation_industry_label'), 'trim');
 		$this->form_validation->set_rules('password', $this->lang->line('create_user_validation_password_label'), 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
 		$this->form_validation->set_rules('password_confirm', $this->lang->line('create_user_validation_password_confirm_label'), 'required');
 
@@ -90,6 +91,7 @@ class Calculators extends CI_Controller {
 		{
 			// check to see if we are creating the user
 			// redirect them back to the admin page
+
 			$this->session->set_flashdata('message', $this->ion_auth->messages());
 			redirect("/", 'refresh');
 		}
@@ -97,8 +99,9 @@ class Calculators extends CI_Controller {
 		{
 			// display the create user form
 			// set the flash data error message if there is one
-			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
 
+			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
+			
 			$this->data['first_name'] = array(
 				'name' => 'first_name',
 				'id' => 'first_name',
@@ -186,7 +189,7 @@ class Calculators extends CI_Controller {
 		$nowTimestamp = $date->getTimestamp();
 		$date->modify('first day of next month');
 		$firstDayOfNextMonthTimestamp = $date->getTimestamp();
-		$remaining_days=($firstDayOfNextMonthTimestamp - $nowTimestamp) / 86400;
+		//$remaining_days=($firstDayOfNextMonthTimestamp - $nowTimestamp) / 86400;
 
 		/**********************
 		$startDate= new DateTime();
@@ -205,6 +208,8 @@ class Calculators extends CI_Controller {
 		$gifs= $_POST['gif'];
 		$total=$_POST['total_price'];
 		$agree=$_POST['agreement'];
+		$remaining_days=$_POST['remaining_days'];
+		$total_this_month=$_POST['total_this_month'];
 		$desc_format=$posts." posts + ".$pages."pages + ".$gifs." gifs for a total of ". $total." $" ;
 		$daily_rate=$total/30;
 
@@ -235,12 +240,12 @@ class Calculators extends CI_Controller {
 		// However, it is generally a good idea to set these values, in case you plan to create billing agreements which accepts "paypal" as payment_method.
 		// This will keep your plan compatible with both the possible scenarios on how it is being used in agreement.
 
-		$merchantPreferences->setReturnUrl("$baseUrl/Calculators/create_user?success=true")
-		    ->setCancelUrl("$baseUrl/Calculators/create_user?success=false")
+		$merchantPreferences->setReturnUrl("$baseUrl/create_user?success=true")
+		    ->setCancelUrl("$baseUrl/create_user?success=false")
 		    ->setAutoBillAmount("yes")
 		    ->setInitialFailAmountAction("CONTINUE")
 		    ->setMaxFailAttempts("0")
-		    ->setSetupFee(new Currency(array('value' => $daily_rate*$remaining_days, 'currency' => 'USD')));
+		    ->setSetupFee(new Currency(array('value' => $total_this_month, 'currency' => 'USD')));
 		$plan->setPaymentDefinitions(array($paymentDefinition));
 		$plan->setMerchantPreferences($merchantPreferences);
 		// For Sample Purposes Only.

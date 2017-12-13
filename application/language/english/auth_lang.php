@@ -55,6 +55,7 @@ $lang['create_user_validation_identity_label']         = 'Identity';
 $lang['create_user_validation_email_label']            = 'Email Address';
 $lang['create_user_validation_phone_label']            = 'Phone';
 $lang['create_user_validation_company_label']          = 'Company Name';
+$lang['create_user_validation_industry_label']          = 'Industry ';
 $lang['create_user_validation_password_label']         = 'Password';
 $lang['create_user_validation_password_confirm_label'] = 'Password Confirmation';
 
