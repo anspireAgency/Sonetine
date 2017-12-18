@@ -13,11 +13,12 @@ class Users extends CI_Controller
 	}
 
 		public function profile(){
-			if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+
+			if (!$this->ion_auth->logged_in()) {
 					redirect('auth/login', 'refresh');
 			}else{
 				$data['user']=$this->user_model->get_by_email($this->session->userdata('email'));
-				$this->load->view('users/user',$data);
+				$this->load->view('facebook/index.php',$data);
 			}
 
 		}

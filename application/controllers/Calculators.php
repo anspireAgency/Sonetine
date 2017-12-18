@@ -223,7 +223,7 @@ class Calculators extends CI_Controller {
 				'value' => $this->form_validation->set_value('password_confirm'),
 			);
 
-			$this->_render_page('user/create_user', $this->data);
+			$this->_render_page('users/create_user', $this->data);
 		}
 	}
 	public function _render_page($view, $data = NULL, $returnhtml = FALSE)//I think this makes more sense

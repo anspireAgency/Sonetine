@@ -7,6 +7,15 @@ class user_model extends CI_Model
         parent::__construct();
     }
 
+		public function insert_user_page($user_id,$page_id,$page_category,$page_name,$access_token){
+
+			return $this->db->insert('user_pages', array('user_id' => $user_id,
+			'access_token' => $access_token,
+'page_id' =>$page_id,
+'page_name' => $page_name,
+'page_category' => $page_category
+));
+		}
 		public function get_by_email($email){
 			$this->db->from('users');
 			$this->db->where('email', $email);
