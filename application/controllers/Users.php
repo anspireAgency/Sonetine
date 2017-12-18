@@ -10,14 +10,23 @@ class Users extends CI_Controller
 		$this->load->library(array('session', 'form_validation', 'email'));
 		$this->load->database();
 		$this->load->model('user_model');
-		$this->load->view('user_registration_view');
 	}
+
+		public function profile(){
+			if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+					redirect('auth/login', 'refresh');
+			}else{
+				$data['user']=$this->user_model->get_by_email($this->session->userdata('email'));
+				$this->load->view('users/user',$data);
+			}
+
+		}
+
 
 	function index()
 	{
 		$this->register();
 	}
-
     function register()
     {
 		//set validation rules

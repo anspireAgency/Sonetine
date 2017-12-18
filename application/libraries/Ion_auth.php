@@ -71,7 +71,7 @@ class Ion_auth
 		$this->load->model('ion_auth_model');
 
 		$this->_cache_user_in_group =& $this->ion_auth_model->_cache_user_in_group;
-	
+
 		$email_config = $this->config->item('email_config', 'ion_auth');
 
 		if ($this->config->item('use_ci_email', 'ion_auth') && isset($email_config) && is_array($email_config))
@@ -93,6 +93,24 @@ class Ion_auth
 	 * @return mixed
 	 * @throws Exception
 	 */
+	 public function get_hash($email)
+		{
+
+			$query = $this->db->query("select activation_code from users where email LIKE '".split("=",$email)[1]."'");
+			$hash='';
+			foreach ($query->result_array() as $row)
+			{
+				$hash= $row['activation_code'];
+			}
+			return $hash;
+	 }
+	 public function verify_user($email)
+	 {
+			 $data = array('is_verified' => 1);
+			 $this->db->where('email', split("=",$email)[1]);
+			 $this->db->update('users', $data);
+	 }
+
 	public function __call($method, $arguments)
 	{
 		if (!method_exists( $this->ion_auth_model, $method) )

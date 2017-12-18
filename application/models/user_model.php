@@ -6,20 +6,25 @@ class user_model extends CI_Model
         // Call the Model constructor
         parent::__construct();
     }
-	
+
+		public function get_by_email($email){
+			$this->db->from('users');
+			$this->db->where('email', $email);
+			return $this->db->get()->row();;
+		}
+
 	//insert into user table
 	function insertUser($data)
     {
 		return $this->db->insert('user', $data);
 	}
-	
 	//send verification email to user's email id
 	function sendEmail($to_email)
 	{
 		$from_email = 'team@mydomain.com';
 		$subject = 'Verify Your Email Address';
 		$message = 'Dear User,<br /><br />Please click on the below activation link to verify your email address.<br /><br /> http://www.mydomain.com/user/verify/' . md5($to_email) . '<br /><br /><br />Thanks<br />Mydomain Team';
-		
+
 		//configure email settings
 		$config['protocol'] = 'smtp';
 		$config['smtp_host'] = 'ssl://smtp.mydomain.com'; //smtp host name
@@ -31,7 +36,7 @@ class user_model extends CI_Model
 		$config['wordwrap'] = TRUE;
 		$config['newline'] = "\r\n"; //use double quotes
 		$this->email->initialize($config);
-		
+
 		//send mail
 		$this->email->from($from_email, 'Mydomain');
 		$this->email->to($to_email);
@@ -39,7 +44,7 @@ class user_model extends CI_Model
 		$this->email->message($message);
 		return $this->email->send();
 	}
-	
+
 	//activate user account
 	function verifyEmailID($key)
 	{

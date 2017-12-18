@@ -34,6 +34,7 @@ class Calculators extends CI_Controller {
 	 public function __construct()
 	 {
 			 parent::__construct();
+
 			 $this->load->database();
 			 $this->load->library(array('ion_auth', 'form_validation'));
 			 $this->load->helper(array('url', 'language'));
@@ -46,6 +47,67 @@ class Calculators extends CI_Controller {
 	public function index()
 	{
 		$this->load->view('calculator');
+	}
+	public function verify()
+	{
+		$email =  split('&hash=',$this->uri->segment(3))[0];
+  	$hash =   split('&hash=',$this->uri->segment(3))[1];
+					 $this->load->library(array('ion_auth', 'form_validation'));
+		$original_hash=$this->ion_auth->get_hash($email);
+		if($original_hash==$hash)
+		{
+			$this->ion_auth->verify_user($email);
+			$this->load->view('calculator');
+			echo 'Your mail has been verified';
+		}
+	}
+	public function send_email($hash)
+	{
+
+
+		$config = Array(
+		'protocol' => 'smtp',
+		'smtp_host' => 'ssl://mail.sonetine.com',
+		'smtp_port' => 465,
+		'smtp_user' => 'dont-reply@sonetine.com',
+		'smtp_pass' => 'Dontpassword18',
+		);
+		 $this->load->library('email',$config);
+		$this->email->set_newline("\r\n");
+		$this->email->from('dont-reply@sonetine.com', 'Sonetine - DO NOT REPLY');
+		$this->email->to($this->input->post('email'));
+		$this->email->subject(' Congratulations! You just created an account ');
+		$data = array(
+			'first_name' =>$this->input->post('first_name'),
+      'email'=> $this->input->post('email'),
+			'password' =>$this->input->post('password'),
+			'hash'=>$hash
+
+          );
+
+		/*$message='Thanks for signing up, '.$this->input->post('first_name').'!
+
+        Your account has been created.
+        Here are your login details.
+        -------------------------------------------------
+        Email   : ' . $this->input->post('email') . '
+        Password: ' . $this->input->post('password') . '
+        -------------------------------------------------
+
+        Please click this link to activate your account:
+
+        ' . base_url() . 'Calculators/verify/' .
+        'email=' .  $this->input->post('email') . '&hash=' . $hash ;*/
+
+				$body=$this->load->view('emails/verification',$data);
+		$this->email->message($body);
+		if (!$this->email->send())
+		{
+			show_error($this->email->print_debugger());
+		}
+		else {
+			echo 'Your e-mail has been sent!';
+		}
 	}
 	public function create_user()
 	{
@@ -78,22 +140,25 @@ class Calculators extends CI_Controller {
 			$email = strtolower($this->input->post('email'));
 			$identity = ($identity_column === 'email') ? $email : $this->input->post('identity');
 			$password = $this->input->post('password');
-
+			$hash=md5(rand(0, 1000));
 			$additional_data = array(
 				'first_name' => $this->input->post('first_name'),
 				'last_name' => $this->input->post('last_name'),
 				'company' => $this->input->post('company'),
 				'industry' => $this->input->post('industry'),
 				'phone' => $this->input->post('phone'),
+				'activation_code'=>$hash
 			);
 		}
 		if ($this->form_validation->run() === TRUE && $this->ion_auth->register($identity, $password, $email, $additional_data))
 		{
 			// check to see if we are creating the user
 			// redirect them back to the admin page
+//$this->send_email($hash);
+			$this->session->set_flashdata('message','Profile created successfully');
+			echo '<meta http-equiv="refresh" content="2;url=' . site_url("auth/login") . '">';
 
-			$this->session->set_flashdata('message', $this->ion_auth->messages());
-			redirect("/", 'refresh');
+
 		}
 		else
 		{
@@ -101,7 +166,7 @@ class Calculators extends CI_Controller {
 			// set the flash data error message if there is one
 
 			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
-			
+
 			$this->data['first_name'] = array(
 				'name' => 'first_name',
 				'id' => 'first_name',
@@ -178,8 +243,8 @@ class Calculators extends CI_Controller {
 	{
 		$apiContext = new \PayPal\Rest\ApiContext(
 		    new \PayPal\Auth\OAuthTokenCredential(
-		        'AYSq3RDGsmBLJE-otTkBtM-jBRd1TCQwFf9RGfwddNXWz0uFU9ztymylOhRS',     // ClientID
-		        'EGnHDxD_qRPdaLdZz8iCr8N7_MzF-YHPTkjs6NKYQvQSBngp4PTTVWkPZRbL'      // ClientSecret
+					'AYSq3RDGsmBLJE-otTkBtM-jBRd1TCQwFf9RGfwddNXWz0uFU9ztymylOhRS',     // ClientID
+	        'EGnHDxD_qRPdaLdZz8iCr8N7_MzF-YHPTkjs6NKYQvQSBngp4PTTVWkPZRbL'      // ClientSecret
 		    )
 		);
 

@@ -16,6 +16,8 @@
 </head>
 
 <body>
+  <!-- <?php echo $_SESSION['email'];?>-->
+  <!--<div id="infoMessage"><?php echo $message;?></div>-->
   <?php echo form_open("Calculators/create_plan");?>
   <div class="sonetine-container">
     <section id="first-section">
