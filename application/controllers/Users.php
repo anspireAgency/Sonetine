@@ -5,7 +5,9 @@ class Users extends CI_Controller
 	{
 
 		parent::__construct();
-		//die('here');
+		if (!$this->ion_auth->logged_in()) {
+				redirect('auth/login', 'refresh');
+		}
 		$this->load->helper(array('form','url'));
 		$this->load->library(array('session', 'form_validation', 'email'));
 		$this->load->database();
@@ -14,19 +16,18 @@ class Users extends CI_Controller
 
 		public function profile(){
 
-			if (!$this->ion_auth->logged_in()) {
-					redirect('auth/login', 'refresh');
-			}else{
-				$data['user']=$this->user_model->get_by_email($this->session->userdata('email'));
-				$this->load->view('facebook/index.php',$data);
-			}
-
+			$data['user']=$this->user_model->get_by_email($this->session->userdata('email'));
+			redirect('Facebook');
+			//$this->load->view('facebook/index.php',$data);
 		}
 
 
 	function index()
 	{
-		$this->register();
+		if (!$this->ion_auth->logged_in()) {
+				redirect('auth/login', 'refresh');
+		}
+		$this->load->view('users/index.php');
 	}
     function register()
     {
@@ -61,20 +62,20 @@ class Users extends CI_Controller
 				{
 					// successfully sent mail
 					$this->session->set_flashdata('msg','<div class="alert alert-success text-center">You are Successfully Registered! Please confirm the mail sent to your Email-ID!!!</div>');
-					redirect('user/register');
+					redirect('users/register');
 				}
 				else
 				{
 					// error
 					$this->session->set_flashdata('msg','<div class="alert alert-danger text-center">Oops! Error.  Please try again later!!!</div>');
-					redirect('user/register');
+					redirect('users/register');
 				}
 			}
 			else
 			{
 				// error
 				$this->session->set_flashdata('msg','<div class="alert alert-danger text-center">Oops! Error.  Please try again later!!!</div>');
-				redirect('user/register');
+				redirect('users/register');
 			}
 		}
 	}
@@ -84,12 +85,12 @@ class Users extends CI_Controller
 		if ($this->user_model->verifyEmailID($hash))
 		{
 			$this->session->set_flashdata('verify_msg','<div class="alert alert-success text-center">Your Email Address is successfully verified! Please login to access your account!</div>');
-			redirect('user/register');
+			redirect('users/register');
 		}
 		else
 		{
 			$this->session->set_flashdata('verify_msg','<div class="alert alert-danger text-center">Sorry! There is error verifying your Email Address!</div>');
-			redirect('user/register');
+			redirect('users/register');
 		}
 	}
 }

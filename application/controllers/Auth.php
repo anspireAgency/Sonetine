@@ -76,7 +76,13 @@ class Auth extends CI_Controller
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
 				//die($this->input->post('identity'));
 				$this->session->set_userdata('email', $this->input->post('identity'));
+				if (!$this->ion_auth->is_admin()) // remove this elseif if you want to enable this for non-admins
+        {
+            // redirect them to the home page because they must be an administrator to view this
 				redirect('Users/profile', 'refresh');
+				}else{
+					redirect('Dashboard');
+				}
 			}
 			else
 			{

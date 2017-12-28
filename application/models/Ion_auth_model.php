@@ -1023,11 +1023,12 @@ class Ion_auth_model extends CI_Model
 
 		$this->trigger_events('extra_where');
 
-		$query = $this->db->select($this->identity_column . ', email, id, password, active, last_login')
+		$query = $this->db->select($this->identity_column . ', email, id, password, active, last_login,is_verified')
 						  ->where($this->identity_column, $identity)
 						  ->limit(1)
 						  ->order_by('id', 'desc')
 						  ->get($this->tables['users']);
+
 
 		if ($this->is_max_login_attempts_exceeded($identity))
 		{
@@ -1056,6 +1057,14 @@ class Ion_auth_model extends CI_Model
 					return FALSE;
 				}
 
+				/*
+				if($user-> is_verified==0){
+					$this->trigger_events('post_login_unsuccessful');
+					$this->set_error('login_unsuccessful_not_verified');
+
+					return FALSE;
+				}
+				*/
 				$this->set_session($user);
 
 				$this->update_last_login($user->id);

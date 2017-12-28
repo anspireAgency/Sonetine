@@ -16,7 +16,7 @@
         <th>page ID</th>
         <th>page name</th>
         <th>category</th>
-        <th>token</th>
+        <th>email</th>
 
       </tr>
     </thead>
@@ -25,13 +25,14 @@
       <?php foreach ($pages as $page):?>
         <?php echo form_open("Facebook/add_page") ?>
         <tr>
+          <td><input type='submit' value='pick me' onclick="return confirm('Do you want to add this page?');"></td>
           <td><input name="page_id" value="<?php echo $page['id']?>"readonly>   </input></td>
           <td><input name="page_name" value="<?php echo $page['name']?>"readonly>  </input></td>
           <td><input name="page_category" value="<?php echo $page['category']?>"readonly>    </input> </td>
           <td><input hidden="true" name="access_token"  value="<?php echo $page['access_token']?>"readonly>  </input>
               <input  name="user_id" value="<?php echo $user->id;?>"readonly>  </input>
           </td>
-            <td><input type='submit' value='pick me' onclick="return confirm('Do you want to add this page?');"></td>
+
         </tr>
         <?php echo form_close()?>
       <?php endforeach;?>
