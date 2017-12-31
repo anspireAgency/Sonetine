@@ -223,12 +223,14 @@ class Facebook extends CI_Controller
 		} catch(Facebook\Exceptions\FacebookResponseException $e) {
 
 		  echo 'Graph returned an error: ' . $e->getMessage();
-		  exit;
+			redirect('Facebook');
+		  //exit;
 
 		} catch(Facebook\Exceptions\FacebookSDKException $e) {
 
 		  echo 'Facebook SDK returned an error: ' . $e->getMessage();
-		  exit;
+			redirect('Facebook');
+		  //exit;
 
 		}
 

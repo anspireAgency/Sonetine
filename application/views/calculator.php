@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 
 <head>
+
   <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Sonetine</title>
@@ -108,7 +109,7 @@
   </div>
   <script>
   function calculate(){
-    var total=Math.ceil((parseInt(document.getElementById('post_price').value)*10+parseInt(document.getElementById('page_price').value)*10+parseInt(document.getElementById('gif_price').value)*10)*1.04);
+    var total=Math.ceil((parseInt(document.getElementById('post_price').value)*10+parseInt(document.getElementById('page_price').value)*25+parseInt(document.getElementById('gif_price').value)*25)*1.04);
     document.getElementById('total').value=total;
     document.getElementById('visible_total').innerHTML='$'+total+'/Month';
 

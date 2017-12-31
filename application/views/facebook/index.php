@@ -14,7 +14,72 @@ echo '<a href="' . htmlspecialchars($loginUrl) . '">Add new Entity!</a>';
 <html>
 <head>
 
+  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
+  <script>
+      var OneSignal = window.OneSignal || [];
+      OneSignal.push(["init", {
+          appId: "ce433acd-96ac-4ef3-a6c4-c96c6d247058",
+          welcomeNotification: {
+                  disable: true
+              },
+          autoRegister: true,
+          promptOptions: {
+              /* These prompt options values configure both the HTTP prompt and the HTTP popup. */
+              /* actionMessage limited to 90 characters */
+              actionMessage: "We'd like to show you notifications for the latest news.",
+              /* acceptButtonText limited to 15 characters */
+              acceptButtonText: "ALLOW",
+              /* cancelButtonText limited to 15 characters */
+              cancelButtonText: "NO THANKS"
+          }
+      }]);
+  </script>
+  <script>
+      function subscribe() {
+          // OneSignal.push(["registerForPushNotifications"]);
+          OneSignal.push(["registerForPushNotifications"]);
+          event.preventDefault();
+      }
+      function unsubscribe(){
+          OneSignal.setSubscription(true);
+      }
 
+      var OneSignal = OneSignal || [];
+      OneSignal.push(function() {
+          /* These examples are all valid */
+          // Occurs when the user's subscription changes to a new value.
+          OneSignal.on('subscriptionChange', function (isSubscribed) {
+              console.log("The user's subscription state is now:", isSubscribed);
+              OneSignal.sendTag("user_id","4444", function(tagsSent)
+              {
+                  // Callback called when tags have finished sending
+                  console.log("Tags have finished sending!");
+              });
+          });
+
+          var isPushSupported = OneSignal.isPushNotificationsSupported();
+          if (isPushSupported)
+          {
+              // Push notifications are supported
+              OneSignal.isPushNotificationsEnabled().then(function(isEnabled)
+              {
+                  if (isEnabled)
+                  {
+                      console.log("Push notifications are enabled!");
+
+                  } else {
+                      OneSignal.showHttpPrompt();
+                      console.log("Push notifications are not enabled yet.");
+                  }
+              });
+
+          } else {
+              console.log("Push notifications are not supported.");
+          }
+      });
+
+
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CodeIgniter User Registration Form Demo</title>
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet" type="text/css" />
@@ -61,7 +126,7 @@ echo '<a href="' . htmlspecialchars($loginUrl) . '">Add new Entity!</a>';
             <input type='submit' value='Reject'/>
           </td>
           <td>
-            <img src="<?php echo $notification->design_path;?>" alt="Smiley face" height="250" width="250">
+            <img src="<?php echo get_image_path($notification->design_path);?>" alt="Smiley face" height="250" width="250">
             <a title="Click to download" id="download" href="<?php echo base_url(); ?>Facebook/download_design/<?php echo $notification -> design_path;?>" >Download</a>
           </td>
           <td><input typname="file_path" value="<?php echo $notification -> notes;?>"readonly>   </input></td>
@@ -70,7 +135,7 @@ echo '<a href="' . htmlspecialchars($loginUrl) . '">Add new Entity!</a>';
           <td><input name="time_of_post"  value="<?php echo $notification -> time_of_post;?>"readonly>  </input> </td>
           <td><input name="page_name"  value="<?php echo $notification -> page_name;?>"readonly>  </input> </td>
           <td>
-            <input name="rej_req_id"  value="<?php echo $notification -> id;?>"/>
+            <input hidden="true" name="rej_req_id"  value="<?php echo $notification -> id;?>"/>
             <input name="client_name"  value="<?php echo $notification -> first_name;?>"readonly>  </input>
           </td>
         </tr>
