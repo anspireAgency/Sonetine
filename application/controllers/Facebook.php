@@ -24,6 +24,10 @@ class Facebook extends CI_Controller
 		$this->user_model->update_notifications($this->ion_auth->user()->row()->id);
 		$this->load->view('facebook/index.php',$data);
 	}
+	function noti(){
+
+		echo $this->user_model->get_notifications($this->ion_auth->user()->row()->id)->num_rows() ;
+	}
 	function edit_request(){
 		$request_id=$_POST['request_id'];
 		$caption=$_POST['caption'];
@@ -69,7 +73,7 @@ class Facebook extends CI_Controller
 		}
 		/* handle the result */
 	}
-
+	// this function posts a scheduled post
 	public function schedule_post($reqid){
 		//pageid,$caption,$time,$token
 
@@ -325,6 +329,6 @@ class Facebook extends CI_Controller
 
 
 
-// this function posts a scheduled post
+
 
 }
